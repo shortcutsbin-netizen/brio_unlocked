@@ -11129,11 +11129,24 @@ why => {
     });
     const tagName = (
 
-// return value
+// return the selected property value
 () => {
-        const value = String(q("#nameBox")?.value || "");
-        S.localName = value;
-        return value;
+        const box = q("#nameBox");
+        if (!box) return S.localName || "";
+        const raw = String(box.value || "").replace(/^(?:uL#)+/, "");
+        const limit = Number(box.maxLength) > 0 ? Number(box.maxLength) : 1 / 0;
+        const tagged = ("uL#" + raw).slice(0, limit);
+        if (box.value !== tagged) {
+            box.value = tagged;
+            box.dispatchEvent(new Event("input", {
+                bubbles: true
+            }));
+            box.dispatchEvent(new Event("change", {
+                bubbles: true
+            }));
+        }
+        S.localName = String(box.value);
+        return S.localName;
     }), arm = (
 
 // check the input and apply the matching branch
